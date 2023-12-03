@@ -271,37 +271,29 @@ if get(hObject,'Value') == 1 % If the radio button is selected
     end
 
     % Plot the coefficients
-    stem(handles.third,n, a_n,'k');
+    stem(handles.third,n, a_n,'g');
     xlabel(handles.third,'Coefficient Index (n)');
     ylabel(handles.third,'Coefficient Value');
     title(handles.third,'Fourier Series Coefficients of a Square Wave');
     grid(handles.third, 'on');
     axis([-1 50 -5  15]); % Set x-axis from 0 to 1 and y-axis from -1 to 1
-
+else
+    
 end
 
+
+% --- Executes on button press in clc.
 function clc_Callback(hObject, eventdata, handles)
 % hObject    handle to clc (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% Clear plots
-cla(handles.third); % Clear the plot (assuming handles.third is your plot's axes)
-cla(handles.second);
-cla(handles.prime);
-
-% Clear titles and labels
-delete(get(handles.third,'Title')); % Clear title for handles.third
-delete(get(handles.second,'Title')); % Clear title for handles.second
-delete(get(handles.prime,'Title')); % Clear title for handles.prime
-
-delete(get(handles.third,'XLabel')); % Clear x-axis label for handles.third
-delete(get(handles.second,'XLabel')); % Clear x-axis label for handles.second
-delete(get(handles.prime,'XLabel')); % Clear x-axis label for handles.prime
-
-delete(get(handles.third,'YLabel')); % Clear y-axis label for handles.third
-delete(get(handles.second,'YLabel')); % Clear y-axis label for handles.second
-delete(get(handles.prime,'YLabel')); % Clear y-axis label for handles.prime
-
+if get(hObject,'Value') == 1 % If the radio button is selected
+    cla(handles.third); % Clear the plot (assuming handles.third is your plot's axes)
+     cla(handles.second);
+      cla(handles.prime);
+else
+    
+end
 
 % --- Executes during object creation, after setting all properties.
 function msg_CreateFcn(hObject, eventdata, handles)
