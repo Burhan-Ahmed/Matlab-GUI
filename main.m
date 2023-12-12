@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 07-Dec-2023 23:10:51
+% Last Modified by GUIDE v2.5 13-Dec-2023 01:59:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -256,6 +256,8 @@ function fsc_Callback(hObject, eventdata, handles)
 
 % Check the state of the radio button
 if get(hObject,'Value') == 1 % If the radio button is selected
+       set(handles.con, 'Value', 0);
+    set(handles.clc, 'Value', 0);
     % Define the parameters
     T = 1; % Time period of the square wave
     N = 50; % Number of coefficients
@@ -285,9 +287,13 @@ function clc_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Clear plots
+% If the radio button is selecteds
 cla(handles.third); % Clear the plot (assuming handles.third is your plot's axes)
 cla(handles.second);
 cla(handles.prime);
+
+   set(handles.con, 'Value', 0);
+    set(handles.fsc, 'Value', 0);
 
 % Clear titles and labels
 delete(get(handles.third,'Title')); % Clear title for handles.third
@@ -308,7 +314,7 @@ function msg_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to msg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-msgbox('Welcome to my GUI');
+%msgbox('Welcome to my GUI');
 
 
 % --- Executes on button press in left.
@@ -389,5 +395,54 @@ function con_Callback(hObject, eventdata, handles)
 % hObject    handle to con (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+if get(hObject,'Value') == 1 % If the radio button is selected
+   set(handles.fsc, 'Value', 0);
+    set(handles.clc, 'Value', 0);
+end
 % Hint: get(hObject,'Value') returns toggle state of con
+
+
+
+function input_Callback(hObject, eventdata, handles)
+% hObject    handle to input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input as text
+%        str2double(get(hObject,'String')) returns contents of input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function impulse_Callback(hObject, eventdata, handles)
+% hObject    handle to impulse (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of impulse as text
+%        str2double(get(hObject,'String')) returns contents of impulse as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function impulse_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to impulse (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
