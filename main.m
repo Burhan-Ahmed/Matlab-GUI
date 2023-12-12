@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 13-Dec-2023 01:59:31
+% Last Modified by GUIDE v2.5 13-Dec-2023 02:16:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -322,7 +322,12 @@ function left_Callback(hObject, eventdata, handles)
 % hObject    handle to left (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+if get(hObject,'Value') == 1 
+     set(handles.right, 'Value', 0);
+    set(handles.shift, 'Visible', 'on');
+else
+    set(handles.shift, 'Visible', 'off');
+end
 % Hint: get(hObject,'Value') returns toggle state of left
 
 
@@ -331,7 +336,12 @@ function right_Callback(hObject, eventdata, handles)
 % hObject    handle to right (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+if get(hObject,'Value') == 1 
+     set(handles.left, 'Value', 0);
+    set(handles.shift, 'Visible', 'on');
+else
+    set(handles.shift, 'Visible', 'off');
+end
 % Hint: get(hObject,'Value') returns toggle state of right
 
 
@@ -368,18 +378,18 @@ function togglebutton1_Callback(hObject, eventdata, handles)
 
 
 
-function edit10_Callback(hObject, eventdata, handles)
-% hObject    handle to edit10 (see GCBO)
+function shift_Callback(hObject, eventdata, handles)
+% hObject    handle to shift (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit10 as text
-%        str2double(get(hObject,'String')) returns contents of edit10 as a double
+% Hints: get(hObject,'String') returns contents of shift as text
+%        str2double(get(hObject,'String')) returns contents of shift as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit10_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit10 (see GCBO)
+function shift_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to shift (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
