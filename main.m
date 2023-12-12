@@ -121,16 +121,21 @@ end
 
 
 % Plot Callback
+
 function plot_Callback(hObject, eventdata, handles)
 
 global selected
+global t
+global sinSignal
+global squareWave
+global t_rec
 
 % Retrieve amplitude and frequency values from GUI input
     amplitude = str2double(get(handles.amp, 'String'));
     frequency = str2double(get(handles.freq, 'String'));
-
+t = linspace(0, 10,1000);
 % Generate time vector
-t = linspace(0, 1,1000); % Time vector
+%t = linspace(0, 1,1000); % Time vector
 
 if strcmp(selected, 'Sin wave')
     % Generate sin wave
@@ -149,13 +154,13 @@ elseif strcmp(selected, 'Rectangular wave')
 % Retrieve duty cycle value from GUI input
     dutyCycle = str2double(get(handles.duty, 'String')); % Convert percentage to fraction
 
-    t = 0:0.001:50; % Time vector
+    t_rec = 0:0.001:50; % Time vector
 
     % Generate square wave
-    squareWave = amplitude * square(2 * pi * (frequency/100) * t, dutyCycle);
+    squareWave = amplitude * square(2 * pi * (frequency/100) * t_rec, dutyCycle);
 
 % Plot the square wave
-    plot(handles.second, t, squareWave, 'm', 'LineWidth', 2);
+    plot(handles.second, t_rec, squareWave, 'm', 'LineWidth', 2);
     xlabel(handles.second, 'Time');
     ylabel(handles.second, 'Amplitude');
     title(handles.second, 'Rectangular Wave');
@@ -257,6 +262,7 @@ function fsc_Callback(hObject, eventdata, handles)
 % Check the state of the radio button
 if get(hObject,'Value') == 1 % If the radio button is selected
        set(handles.con, 'Value', 0);
+       set(handles.InputPanel, 'Visible', 'off');
     set(handles.clc, 'Value', 0);
     % Define the parameters
     T = 1; % Time period of the square wave
@@ -273,7 +279,7 @@ if get(hObject,'Value') == 1 % If the radio button is selected
     end
 
     % Plot the coefficients
-    stem(handles.third,n, a_n,'k');
+    plot(handles.third,n, a_n,'k');
     xlabel(handles.third,'Coefficient Index (n)');
     ylabel(handles.third,'Coefficient Value');
     title(handles.third,'Fourier Series Coefficients of a Square Wave');
@@ -292,8 +298,21 @@ cla(handles.third); % Clear the plot (assuming handles.third is your plot's axes
 cla(handles.second);
 cla(handles.prime);
 
-   set(handles.con, 'Value', 0);
-    set(handles.fsc, 'Value', 0);
+set(handles.con, 'Value', 0);
+set(handles.fsc, 'Value', 0);
+
+set(handles.left, 'Value', 0);
+set(handles.right, 'Value', 0); 
+ 
+grid(handles.second, 'off');
+grid(handles.third, 'off');
+grid(handles.prime, 'off');
+
+% Clear the values of edit boxes (assuming these are edit boxes)
+set(handles.shift, 'String', '');  % Clear the value of the 'shift' edit box
+set(handles.amp, 'String', '');    % Clear the value of the 'amp' edit box
+set(handles.freq, 'String', '');   % Clear the value of the 'freq' edit box
+set(handles.duty, 'String', '');   % Clear the value of the 'duty' edit box
 
 % Clear titles and labels
 delete(get(handles.third,'Title')); % Clear title for handles.third
@@ -382,6 +401,51 @@ function shift_Callback(hObject, eventdata, handles)
 % hObject    handle to shift (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+    % Get the value entered in the shift textbox from the GUI
+    global t
+    global t_rec
+    global selected
+    global sinSignal
+    global squareWave
+    
+    CT_shift = str2double(get(handles.shift, 'String'));
+     
+    if strcmp(selected, 'Sin wave') &&  get(handles.left, 'Value') == 1 ;
+    shifted_sine_wave=t-CT_shift;
+    plot(handles.second, shifted_sine_wave, sinSignal, 'k','LineWidth', 2);
+    xlabel(handles.second, 'Time');
+    ylabel(handles.second, 'Amplitude');
+    title(handles.second, 'Sin Wave with Left Shift');
+    grid(handles.second, 'on');
+   %axis([min(n1)-1 max(n1)+1 min(x)-1 max(x)+1]);
+    
+    elseif  strcmp(selected, 'Sin wave') && get(handles.right, 'Value') == 1 ;
+    shifted_sine_wave=t+CT_shift;
+    plot(handles.second, shifted_sine_wave, sinSignal, 'k','LineWidth', 2);
+    xlabel(handles.second, 'Time');
+    ylabel(handles.second, 'Amplitude');
+    title(handles.second, 'Sin Wave with Right Shift');
+    grid(handles.second, 'on');
+    
+    elseif  strcmp(selected, 'Rectangular wave') && get(handles.left, 'Value') == 1 ;
+    shifted_rect_wave=t_rec-CT_shift;
+    plot(handles.prime, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
+    xlabel(handles.prime, 'Time');
+    ylabel(handles.prime, 'Amplitude');
+    title(handles.prime, 'Rectangular Wave with Left Shift');
+    grid(handles.prime, 'on');
+    
+    elseif  strcmp(selected, 'Rectangular wave') && get(handles.right, 'Value') == 1 ;
+    shifted_rect_wave=t_rec+CT_shift;
+    plot(handles.prime, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
+    xlabel(handles.prime, 'Time');
+    ylabel(handles.prime, 'Amplitude');
+    title(handles.prime, 'Rectangular Wave with Right Shift');
+    grid(handles.prime, 'on');
+    else
+     disp('Please select the wave and shift direction.');
+    end
+
 
 % Hints: get(hObject,'String') returns contents of shift as text
 %        str2double(get(hObject,'String')) returns contents of shift as a double
@@ -408,6 +472,8 @@ function con_Callback(hObject, eventdata, handles)
 if get(hObject,'Value') == 1 % If the radio button is selected
    set(handles.fsc, 'Value', 0);
     set(handles.clc, 'Value', 0);
+    set(handles.InputPanel, 'Visible', 'on');
+    
 end
 % Hint: get(hObject,'Value') returns toggle state of con
 
