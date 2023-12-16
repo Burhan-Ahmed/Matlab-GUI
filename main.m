@@ -133,7 +133,7 @@ global t_rec
 % Retrieve amplitude and frequency values from GUI input
     amplitude = str2double(get(handles.amp, 'String'));
     frequency = str2double(get(handles.freq, 'String'));
-t = linspace(0, 10,1000);
+t = linspace(1, 5);
 % Generate time vector
 %t = linspace(0, 1,1000); % Time vector
 
@@ -154,7 +154,7 @@ elseif strcmp(selected, 'Rectangular wave')
 % Retrieve duty cycle value from GUI input
     dutyCycle = str2double(get(handles.duty, 'String')); % Convert percentage to fraction
 
-    t_rec = 0:0.001:50; % Time vector
+    t_rec = -100:100; % Time vector
 
     % Generate square wave
     squareWave = amplitude * square(2 * pi * (frequency/100) * t_rec, dutyCycle);
@@ -469,56 +469,19 @@ function con_Callback(hObject, eventdata, handles)
 % hObject    handle to con (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global sinSignal
+global squareWave
+%global t
+
 if get(hObject,'Value') == 1 % If the radio button is selected
-   set(handles.fsc, 'Value', 0);
-    set(handles.clc, 'Value', 0);
-    set(handles.InputPanel, 'Visible', 'on');
-    
+
+    y = conv(sinSignal, squareWave)
+    t = 0:(length(y)-1);
+    % Plotting the result
+    plot(handles.third, t, y, 'k', 'LineWidth', 2);
+    xlabel(handles.third, 'Time');
+    ylabel(handles.third, 'Amplitude');
+    title(handles.third, 'Convolution');
+    grid(handles.third, 'on');
 end
 % Hint: get(hObject,'Value') returns toggle state of con
-
-
-
-function input_Callback(hObject, eventdata, handles)
-% hObject    handle to input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of input as text
-%        str2double(get(hObject,'String')) returns contents of input as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function input_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to input (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function impulse_Callback(hObject, eventdata, handles)
-% hObject    handle to impulse (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of impulse as text
-%        str2double(get(hObject,'String')) returns contents of impulse as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function impulse_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to impulse (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
