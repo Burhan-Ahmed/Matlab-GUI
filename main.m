@@ -129,13 +129,11 @@ global t
 global sinSignal
 global squareWave
 global t_rec
-
 % Retrieve amplitude and frequency values from GUI input
     amplitude = str2double(get(handles.amp, 'String'));
     frequency = str2double(get(handles.freq, 'String'));
-t = linspace(1, 5);
-% Generate time vector
-%t = linspace(0, 1,1000); % Time vector
+    t =linspace(0,5,1000);
+    %t = linspace(0, 1,1000); % Time vector
 
 if strcmp(selected, 'Sin wave')
     % Generate sin wave
@@ -147,25 +145,23 @@ if strcmp(selected, 'Sin wave')
     ylabel(handles.prime, 'Amplitude');
     title(handles.prime, 'Sine Wave');
     grid(handles.prime, 'on'); 
-    ylim(handles.prime, [min(sinSignal)-1 max(sinSignal)+1]); % Set x-axis from 0 to 1 and y-axis from -1 to 1
-    
+    %axis(handles.prime ,[min(t) max(t) min(sinSignal)-1 max(sinSignal)+1]);
     
 elseif strcmp(selected, 'Rectangular wave')
 % Retrieve duty cycle value from GUI input
     dutyCycle = str2double(get(handles.duty, 'String')); % Convert percentage to fraction
 
-    t_rec = -100:100; % Time vector
-
+    t_rec = linspace(-20,20); % Time vector
     % Generate square wave
     squareWave = amplitude * square(2 * pi * (frequency/100) * t_rec, dutyCycle);
 
 % Plot the square wave
-    plot(handles.second, t_rec, squareWave, 'm', 'LineWidth', 2);
-    xlabel(handles.second, 'Time');
-    ylabel(handles.second, 'Amplitude');
-    title(handles.second, 'Rectangular Wave');
-    grid(handles.second, 'on');
-
+    plot(handles.third, t_rec, squareWave, 'm', 'LineWidth', 2);
+    xlabel(handles.third, 'Time');
+    ylabel(handles.third, 'Amplitude');
+    title(handles.third, 'Rectangular Wave');
+    grid(handles.third, 'on');
+    %axis(handles.third ,[min(t_rec)-5 max(t_rec)+5 min(squareWave)-5 max(squareWave)+5]); 
 end
     
 % Menu Callback
@@ -181,7 +177,7 @@ if strcmp(selected, 'Sin wave')
     % Hide duty cycle UI component
     set(handles.dc,'Visible','off');
     set(handles.duty, 'Visible', 'off');
-else
+elseif strcmp(selected, 'Rectangular wave')
     % Show duty cycle UI component
     set(handles.dc, 'Visible', 'on');
     set(handles.duty, 'Visible', 'on');
@@ -258,34 +254,23 @@ function fsc_Callback(hObject, eventdata, handles)
 % hObject    handle to fs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global squareWave
 % Check the state of the radio button
 if get(hObject,'Value') == 1 % If the radio button is selected
-       set(handles.con, 'Value', 0);
-       set(handles.InputPanel, 'Visible', 'off');
-    set(handles.clc, 'Value', 0);
-    % Define the parameters
-    T = 1; % Time period of the square wave
-    N = 50; % Number of coefficients
-
-    % Calculate Fourier coefficients
-    n = 1:N;
-    a_n = zeros(size(n)); % Coefficients for sine terms
-
-    for i = 1:numel(n)
-        if mod(n(i), 2) == 1 % Coefficients for odd harmonics
-            a_n(i) = (4/T) * (1/n(i) * pi) * sin(n(i) * pi / 2);
-        end
-    end
+    set(handles.con, 'Value', 0);
+    
+    t=-1:0.01:1;
+    Wo=2*pi;
+    n=1:2:5;
+    x=(4./(n.*pi)*sin(Wo*n'*t));
 
     % Plot the coefficients
-    plot(handles.third,n, a_n,'k');
-    xlabel(handles.third,'Coefficient Index (n)');
-    ylabel(handles.third,'Coefficient Value');
-    title(handles.third,'Fourier Series Coefficients of a Square Wave');
-    grid(handles.third, 'on');
-    axis([-1 50 -5  15]); % Set x-axis from 0 to 1 and y-axis from -1 to 1
-
+    plot(handles.four,t, x,'b','Linewidth',2);
+    xlabel(handles.four,'Coefficient Index (n)');
+    ylabel(handles.four,'Coefficient Value');
+    title(handles.four,'Fourier Series Coefficients of a Square Wave');
+    grid(handles.four, 'on');
+    %axis([-1 50 -5  15]); % Set x-axis from 0 to 1 and y-axis from -1 to 1
 end
 
 function clc_Callback(hObject, eventdata, handles)
@@ -297,6 +282,7 @@ function clc_Callback(hObject, eventdata, handles)
 cla(handles.third); % Clear the plot (assuming handles.third is your plot's axes)
 cla(handles.second);
 cla(handles.prime);
+cla(handles.four);
 
 set(handles.con, 'Value', 0);
 set(handles.fsc, 'Value', 0);
@@ -307,6 +293,7 @@ set(handles.right, 'Value', 0);
 grid(handles.second, 'off');
 grid(handles.third, 'off');
 grid(handles.prime, 'off');
+grid(handles.third, 'off');
 
 % Clear the values of edit boxes (assuming these are edit boxes)
 set(handles.shift, 'String', '');  % Clear the value of the 'shift' edit box
@@ -318,22 +305,24 @@ set(handles.duty, 'String', '');   % Clear the value of the 'duty' edit box
 delete(get(handles.third,'Title')); % Clear title for handles.third
 delete(get(handles.second,'Title')); % Clear title for handles.second
 delete(get(handles.prime,'Title')); % Clear title for handles.prime
+delete(get(handles.four,'Title'));
 
 delete(get(handles.third,'XLabel')); % Clear x-axis label for handles.third
 delete(get(handles.second,'XLabel')); % Clear x-axis label for handles.second
 delete(get(handles.prime,'XLabel')); % Clear x-axis label for handles.prime
+delete(get(handles.four,'XLabel'));
 
 delete(get(handles.third,'YLabel')); % Clear y-axis label for handles.third
 delete(get(handles.second,'YLabel')); % Clear y-axis label for handles.second
 delete(get(handles.prime,'YLabel')); % Clear y-axis label for handles.prime
-
+delete(get(handles.four,'YLabel'));
 
 % --- Executes during object creation, after setting all properties.
 function msg_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to msg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-%msgbox('Welcome to my GUI');
+msgbox('Welcome to my GUI');
 
 
 % --- Executes on button press in left.
@@ -407,41 +396,44 @@ function shift_Callback(hObject, eventdata, handles)
     global selected
     global sinSignal
     global squareWave
-    
+
     CT_shift = str2double(get(handles.shift, 'String'));
      
-    if strcmp(selected, 'Sin wave') &&  get(handles.left, 'Value') == 1 ;
+    if strcmp(selected, 'Sin wave') &&  get(handles.left, 'Value') == 1 
     shifted_sine_wave=t-CT_shift;
     plot(handles.second, shifted_sine_wave, sinSignal, 'k','LineWidth', 2);
     xlabel(handles.second, 'Time');
     ylabel(handles.second, 'Amplitude');
     title(handles.second, 'Sin Wave with Left Shift');
     grid(handles.second, 'on');
-   %axis([min(n1)-1 max(n1)+1 min(x)-1 max(x)+1]);
+    %axis(handles.second ,[min(t)-1 max(t)+1 min(sinSignal)-1 max(sinSignal)+1]);
     
-    elseif  strcmp(selected, 'Sin wave') && get(handles.right, 'Value') == 1 ;
+    elseif  strcmp(selected, 'Sin wave') && get(handles.right, 'Value') == 1 
     shifted_sine_wave=t+CT_shift;
     plot(handles.second, shifted_sine_wave, sinSignal, 'k','LineWidth', 2);
     xlabel(handles.second, 'Time');
     ylabel(handles.second, 'Amplitude');
     title(handles.second, 'Sin Wave with Right Shift');
     grid(handles.second, 'on');
+    %axis(handles.second ,[min(t)-1 max(t)+1 min(sinSignal)-1 max(sinSignal)+1]); 
     
-    elseif  strcmp(selected, 'Rectangular wave') && get(handles.left, 'Value') == 1 ;
+    elseif  strcmp(selected, 'Rectangular wave') && get(handles.left, 'Value') == 1 
     shifted_rect_wave=t_rec-CT_shift;
-    plot(handles.prime, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
-    xlabel(handles.prime, 'Time');
-    ylabel(handles.prime, 'Amplitude');
-    title(handles.prime, 'Rectangular Wave with Left Shift');
-    grid(handles.prime, 'on');
+    plot(handles.four, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
+    xlabel(handles.four, 'Time');
+    ylabel(handles.four, 'Amplitude');
+    title(handles.four, 'Rectangular Wave with Left Shift');
+    grid(handles.four, 'on');
+    %axis(handles.four ,[min(t_rec)-5 max(t_rec)+5 min(squareWave)-1 max(squareWave)+1]); 
     
-    elseif  strcmp(selected, 'Rectangular wave') && get(handles.right, 'Value') == 1 ;
+    elseif  strcmp(selected, 'Rectangular wave') && get(handles.right, 'Value') == 1
     shifted_rect_wave=t_rec+CT_shift;
-    plot(handles.prime, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
-    xlabel(handles.prime, 'Time');
-    ylabel(handles.prime, 'Amplitude');
-    title(handles.prime, 'Rectangular Wave with Right Shift');
-    grid(handles.prime, 'on');
+    plot(handles.four, shifted_rect_wave, squareWave, 'k','LineWidth', 2);
+    xlabel(handles.four, 'Time');
+    ylabel(handles.four, 'Amplitude');
+    title(handles.four, 'Rectangular Wave with Right Shift');
+    grid(handles.four, 'on');
+    %axis(handles.four ,[min(t_rec)-5 max(t_rec)+5 min(squareWave)-1 max(squareWave)+1]); 
     else
      disp('Please select the wave and shift direction.');
     end
@@ -474,14 +466,16 @@ global squareWave
 %global t
 
 if get(hObject,'Value') == 1 % If the radio button is selected
-
-    y = conv(sinSignal, squareWave)
+set(handles.fsc, 'Value', 0);
+set(handles.clc, 'Value', 0);
+    y = conv(sinSignal, squareWave);
     t = 0:(length(y)-1);
     % Plotting the result
-    plot(handles.third, t, y, 'k', 'LineWidth', 2);
-    xlabel(handles.third, 'Time');
-    ylabel(handles.third, 'Amplitude');
-    title(handles.third, 'Convolution');
-    grid(handles.third, 'on');
+    plot(handles.second, t, y, 'k', 'LineWidth', 2);
+    xlabel(handles.second, 'Time');
+    ylabel(handles.second, 'Amplitude');
+    title(handles.second, 'Convolution');
+    grid(handles.second, 'on');
+    ylim(handles.second, [min(y)-1 max(y)+1]); 
 end
 % Hint: get(hObject,'Value') returns toggle state of con
