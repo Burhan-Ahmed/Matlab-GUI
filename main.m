@@ -1,4 +1,4 @@
-function varargout = main(varargin)
+ function varargout = main(varargin)
 % MAIN MATLAB code for main.fig
 %      MAIN, by itself, creates a new MAIN or raises the existing
 %      singleton*.
@@ -150,10 +150,10 @@ if strcmp(selected, 'Sin wave')
 elseif strcmp(selected, 'Rectangular wave')
 % Retrieve duty cycle value from GUI input
     dutyCycle = str2double(get(handles.duty, 'String')); % Convert percentage to fraction
-
-    t_rec = linspace(-20,20); % Time vector
+    t_rec =linspace(0,5,1000);
+    %t_rec = linspace(-20,20); % Time vector
     % Generate square wave
-    squareWave = amplitude * square(2 * pi * (frequency/100) * t_rec, dutyCycle);
+    squareWave = amplitude * square(2 * pi * (frequency) * t_rec, dutyCycle);
 
 % Plot the square wave
     plot(handles.third, t_rec, squareWave, 'm', 'LineWidth', 2);
@@ -259,17 +259,34 @@ global squareWave
 if get(hObject,'Value') == 1 % If the radio button is selected
     set(handles.con, 'Value', 0);
     
-    t=-1:0.01:1;
-    Wo=2*pi;
-    n=1:2:5;
-    x=(4./(n.*pi)*sin(Wo*n'*t));
+    %t=-1:0.01:1;
+    %Wo=2*pi;
+    %n=1:2:5;
+    %x=(4./(n.*pi)*sin(Wo*n'*t));
 
     % Plot the coefficients
-    plot(handles.four,t, x,'b','Linewidth',2);
+    %plot(handles.four,t, x,'b','Linewidth',2);
+    %xlabel(handles.four,'Coefficient Index (n)');
+    %ylabel(handles.four,'Coefficient Value');
+    %title(handles.four,'Fourier Series Coefficients of a Square Wave');
+    %grid(handles.four, 'on');
+    
+    set(handles.con, 'Value', 0);
+    amplitude=2;
+    t = linspace(-10, 10, 100);
+    rect_function = rectpuls(t, amplitude);
+    %Fast Fourier Transform (FFT), fftshift is a function that rearranges the outputs of the FFT operation
+    sinc = fftshift(fft(rect_function));  
+    % Plot the coefficients
+    plot(handles.four,t, abs(sinc),'b');
+    hold on
+    plot(handles.four,t, abs(sinc),'o','MarkerEdgeColor', 'r');
+    hold off
     xlabel(handles.four,'Coefficient Index (n)');
-    ylabel(handles.four,'Coefficient Value');
-    title(handles.four,'Fourier Series Coefficients of a Square Wave');
+    ylabel(handles.four,'Magnitude');
+    title(handles.four,'Fourier Series Coefficients of a Rectangular Wave');
     grid(handles.four, 'on');
+    legend('Sinc Function', 'Fourier Series Coefficient');
     %axis([-1 50 -5  15]); % Set x-axis from 0 to 1 and y-axis from -1 to 1
 end
 
